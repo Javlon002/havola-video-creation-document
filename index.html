@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Havola — Video Production Document: Zero-Config Intelligence</title>
+<style>
+  @font-face { font-family: 'Inter'; src: local('Inter'); }
+  @font-face { font-family: 'JetBrains Mono'; src: local('JetBrains Mono'); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #F9FAFB; color: #111827; -webkit-font-smoothing: antialiased; }
+
+  /* NAV */
+  .nav { position: sticky; top: 0; z-index: 100; background: #060608; padding: 12px 48px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .nav-logo { font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.85); }
+  .nav-pills { display: flex; gap: 8px; }
+  .pill { font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+  .pill-v { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.50); }
+  .pill-s { background: #0065F4; color: #fff; }
+
+  /* HERO */
+  .hero { background: #060608; padding: 72px 48px 56px; position: relative; overflow: hidden; }
+  .hero::before { content:''; position:absolute; inset:0; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E"); }
+  .hero-inner { max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-ey { font-size: 11px; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.20); margin-bottom: 20px; }
+  .hero h1 { font-size: 40px; font-weight: 300; line-height: 52px; color: #fff; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .hero h1 em { font-weight: 300; font-style: italic; color: rgba(255,255,255,0.30); }
+  .hero-sub { font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.35); line-height: 26px; max-width: 640px; margin-bottom: 32px; }
+  .hero-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+  .hero-stat-label { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.12); }
+  .hero-stat-value { font-size: 14px; font-weight: 400; color: rgba(255,255,255,0.50); }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 48px; }
+
+  /* SECTION */
+  .section { padding: 48px 0; border-bottom: 1px solid #E5E7EB; }
+  .ey { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0065F4; margin-bottom: 12px; }
+  .st { font-size: 20px; font-weight: 600; letter-spacing: -0.003em; margin-bottom: 12px; }
+  p { font-size: 15px; color: #6B7280; line-height: 27px; margin-bottom: 12px; max-width: 740px; }
+  p strong { color: #111827; font-weight: 600; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* TIMELINE BAR */
+  .tl-bar { display: flex; height: 40px; border-radius: 8px; overflow: hidden; margin: 24px 0; border: 1px solid #E5E7EB; font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .tl-seg { display: flex; align-items: center; justify-content: center; color: #fff; white-space: nowrap; overflow: hidden; padding: 0 3px; }
+
+  /* SCENE CARD */
+  .scene { margin-bottom: 56px; padding-bottom: 56px; border-bottom: 1px solid #E5E7EB; }
+  .scene:last-child { border-bottom: none; }
+  .sc-head { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+  .sc-num { width: 40px; height: 40px; background: #060608; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; border-radius: 999px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sc-num.key { background: #0065F4; }
+  .sc-name { font-size: 20px; font-weight: 600; letter-spacing: -0.003em; }
+  .sc-tags { display: flex; gap: 6px; margin-left: auto; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+  .tag-time { background: #F3F4F6; color: #6B7280; }
+  .tag-screen { background: #EFF6FF; color: #1D4ED8; }
+  .tag-text { background: #F3F4F6; color: #9CA3AF; }
+  .tag-brand { background: #060608; color: rgba(255,255,255,0.50); }
+  .tag-overlay { background: #F0FDF4; color: #166534; }
+  .tag-key { background: #0065F4; color: #fff; }
+
+  /* GRID */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+  .full { margin-bottom: 24px; }
+
+  /* BLOCKS */
+  .block { background: #fff; border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px; }
+  .block.dark { background: #060608; border-color: rgba(255,255,255,0.06); }
+  .block.blue { background: #EFF6FF; border-color: #BFDBFE; }
+  .block.green { background: #F0FDF4; border-color: #BBF7D0; }
+  .block.amber { background: #FFFBEB; border-color: #FDE68A; }
+  .block.purple { background: #F5F3FF; border-color: #DDD6FE; }
+  .bl { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #9CA3AF; margin-bottom: 10px; }
+  .bl-blue { color: #1D4ED8; }
+  .bl-green { color: #166534; }
+  .bl-amber { color: #92400E; }
+  .bl-purple { color: #6D28D9; }
+  .bt { font-size: 14px; color: #374151; line-height: 24px; }
+  .bt em { color: #6B7280; }
+  .bt strong { color: #111827; font-weight: 600; }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+  .option { border-radius: 6px; padding: 14px 16px; border: 1px solid #E5E7EB; background: #fff; }
+  .option.rec { border: 2px solid #0065F4; background: #FAFBFF; }
+  .opt-h { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .opt-letter { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: #6B7280; background: #F3F4F6; width: 22px; height: 22px; border-radius: 999px; display: flex; align-items: center; justify-content: center; }
+  .option.rec .opt-letter { background: #0065F4; color: #fff; }
+  .opt-title { font-size: 13px; font-weight: 600; color: #111827; }
+  .opt-rec { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0065F4; margin-left: auto; }
+  .opt-body { font-size: 13px; color: #6B7280; line-height: 22px; padding-left: 30px; }
+
+  /* VO */
+  .vo { background: #060608; border-radius: 6px; padding: 14px 18px; font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.55); line-height: 22px; font-style: italic; margin-top: 8px; }
+
+  /* TEXT PREVIEW */
+  .tp { background: #1B1F3B; border-radius: 8px; padding: 24px; margin-top: 8px; }
+  .tp.ink { background: #060608; }
+  .tp-ey { font-size: 9px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.20); margin-bottom: 12px; }
+  .tp-h { font-weight: 300; color: #fff; line-height: 1.3; }
+  .tp-h em { font-weight: 300; color: rgba(255,255,255,0.30); }
+  .tp-sub { font-size: 12px; font-weight: 300; color: rgba(255,255,255,0.35); margin-top: 10px; line-height: 1.6; }
+  .tp-wm { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.08); margin-top: 20px; }
+
+  /* DESIGN SPEC TABLE */
+  table.ds { width: 100%; font-size: 13px; border-collapse: collapse; margin-top: 8px; }
+  table.ds td { padding: 6px 0; border-bottom: 1px solid #F3F4F6; vertical-align: top; }
+  table.ds td:first-child { color: #9CA3AF; width: 150px; }
+  table.ds td:last-child { color: #111827; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  /* ANIMATION TABLE */
+  table.anim { width: 100%; font-size: 13px; border-collapse: collapse; margin-top: 8px; }
+  table.anim th { text-align: left; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #9CA3AF; padding: 8px 0; border-bottom: 2px solid #E5E7EB; }
+  table.anim td { padding: 7px 0; border-bottom: 1px solid #F3F4F6; vertical-align: top; font-size: 12px; }
+  table.anim td:first-child { color: #374151; font-weight: 500; width: 160px; }
+  table.anim td:nth-child(2) { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #6B7280; width: 120px; }
+  table.anim td:last-child { color: #6B7280; }
+
+  /* SUMMARY TABLE */
+  table.sum { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 16px; }
+  table.sum th { text-align: left; font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #9CA3AF; padding: 8px 12px; border-bottom: 2px solid #E5E7EB; }
+  table.sum td { padding: 8px 12px; border-bottom: 1px solid #F3F4F6; vertical-align: top; }
+
+  /* BANNER REF */
+  .banner-ref { background: #F3F4F6; border-radius: 6px; padding: 10px 14px; margin-top: 12px; font-size: 12px; color: #6B7280; display: flex; align-items: center; gap: 8px; }
+  .banner-ref-file { font-family: 'JetBrains Mono', monospace; color: #0065F4; font-weight: 500; }
+
+  .divider { height: 1px; background: #E5E7EB; margin: 48px 0; }
+
+  .footer { background: #060608; padding: 24px 48px; text-align: center; margin-top: 48px; }
+  .footer p { font-size: 11px; color: rgba(255,255,255,0.15); }
+
+  @media (max-width: 768px) {
+    .hero { padding: 48px 24px 40px; }
+    .hero h1 { font-size: 28px; line-height: 38px; }
+    .hero-grid { grid-template-columns: repeat(2, 1fr); }
+    .container { padding: 0 24px; }
+    .g2 { grid-template-columns: 1fr; }
+    .sc-head { flex-direction: column; align-items: flex-start; }
+    .sc-tags { margin-left: 0; }
+    .nav { padding: 12px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-logo">Havola</div>
+  <div class="nav-pills">
+    <div class="pill pill-s">Production Document</div>
+    <div class="pill pill-v">v3.0</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-ey">Video Production Document · Campaign Analytics · Wave 2</div>
+    <h1>You built the page.<br><em>The dashboard was already there.</em></h1>
+    <p class="hero-sub">Zero-config intelligence. Havola owns both the campaign asset and the analytics layer. This document is the single source of truth — content, design, story, timeline, animations, and banner references for every scene.</p>
+    <div class="hero-grid">
+      <div><div class="hero-stat-label">Duration</div><div class="hero-stat-value">48 seconds</div></div>
+      <div><div class="hero-stat-label">Frame</div><div class="hero-stat-value">1080×1920 · 9:16</div></div>
+      <div><div class="hero-stat-label">Scenes</div><div class="hero-stat-value">11 frames, 9 scenes</div></div>
+      <div><div class="hero-stat-label">Product %</div><div class="hero-stat-value">63% on screen</div></div>
+      <div><div class="hero-stat-label">Banner</div><div class="hero-stat-value">2400×1600 @2x</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ================================================ -->
+<!-- STORY -->
+<!-- ================================================ -->
+<div class="section">
+  <div class="ey">The Story</div>
+  <div class="st">What this video proves</div>
+  <p>Every tool in the market owns one layer. Webflow builds the page but can't track it. Bitly tracks the link but can't build the page. GA tracks visits but doesn't own any campaign asset. Between building and understanding, there's always a configuration tax — Tag Manager, UTMs, event setup, verification.</p>
+  <p><strong>Havola owns both layers.</strong> When you build a campaign asset on Havola, the analytics are already running. No configuration. This video shows that loop: build → publish → data flowing → intelligence → client report.</p>
+  <p>The competitive advantage is embedded in one editorial decision: the hard cut between the publish button and live analytics. <strong>That missing configuration scene is the whole story.</strong></p>
+</div>
+
+<!-- ================================================ -->
+<!-- NARRATIVE ARC -->
+<!-- ================================================ -->
+<div class="section">
+  <div class="ey">Narrative Arc</div>
+  <div class="st">Pain → Cost → Shift → Product → Invitation</div>
+  <p>Content engine rule: never lead with the product. Always lead with the pain the audience experienced this week.</p>
+  <div class="tl-bar">
+    <div class="tl-seg" style="flex:3;background:#EF4444;">Hook 3s</div>
+    <div class="tl-seg" style="flex:1;background:#F97316;">Build 1s</div>
+    <div class="tl-seg" style="flex:2;background:#F59E0B;">GTM 2s</div>
+    <div class="tl-seg" style="flex:2;background:#F59E0B;">UTM 2s</div>
+    <div class="tl-seg" style="flex:3;background:#F59E0B;">GA4 3s</div>
+    <div class="tl-seg" style="flex:3;background:#3B82F6;">Shift 3s</div>
+    <div class="tl-seg" style="flex:7;background:#10B981;">Build 7s</div>
+    <div class="tl-seg" style="flex:6;background:#10B981;">Data 6s</div>
+    <div class="tl-seg" style="flex:7;background:#10B981;">Drill 7s</div>
+    <div class="tl-seg" style="flex:7;background:#10B981;">Export 7s</div>
+    <div class="tl-seg" style="flex:4;background:#8B5CF6;">Loop 4s</div>
+    <div class="tl-seg" style="flex:4;background:#111827;">CTA 4s</div>
+  </div>
+  <p style="font-size:12px;color:#9CA3AF;">Red = hook · Orange = build (old) · Amber = pain · Blue = shift · Green = product (27s, 56%) · Purple = recap · Black = brand</p>
+</div>
+
+<!-- ================================================ -->
+<!-- FRAME SPECS -->
+<!-- ================================================ -->
+<div class="section">
+  <div class="ey">Frame Specifications</div>
+  <div class="st">Video & Banner Standards</div>
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Video Output</div>
+      <table class="ds">
+        <tr><td>Resolution</td><td>1080 × 1920 px</td></tr>
+        <tr><td>Aspect ratio</td><td>9:16 vertical</td></tr>
+        <tr><td>Frame rate</td><td>30 fps</td></tr>
+        <tr><td>Codec</td><td>H.264 MP4</td></tr>
+        <tr><td>Bitrate</td><td>8–12 Mbps VBR</td></tr>
+        <tr><td>Duration</td><td>48 seconds</td></tr>
+      </table>
+    </div>
+    <div class="block">
+      <div class="bl">Banner Assets</div>
+      <table class="ds">
+        <tr><td>Viewport</td><td>1200 × 800 px</td></tr>
+        <tr><td>Scale factor</td><td>2× (Retina)</td></tr>
+        <tr><td>Output</td><td>2400 × 1600 px</td></tr>
+        <tr><td>Laptop screen</td><td>960 × 520 px (standardised)</td></tr>
+        <tr><td>Text card</td><td>960 × 520 px (matches laptop)</td></tr>
+        <tr><td>Format</td><td>PNG · RGBA transparent</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="block">
+    <div class="bl">Typography Scale (1080×1920 canvas)</div>
+    <table class="ds">
+      <tr><td>Hook headline</td><td>64–72px · Light 300</td></tr>
+      <tr><td>Secondary headline</td><td>48–56px · Light 300</td></tr>
+      <tr><td>Subtitle</td><td>20–24px · Light 300</td></tr>
+      <tr><td>Eyebrow</td><td>14–16px · Regular 400 · uppercase · 3px spacing</td></tr>
+      <tr><td>Body / annotations</td><td>16–18px · Medium 500</td></tr>
+      <tr><td>Captions</td><td>18px · SemiBold 600 · pill bg</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 1 — HOOK -->
+<!-- ================================================ -->
+<div style="padding-top:56px;"></div>
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">1</div>
+    <div class="sc-name">Hook</div>
+    <div class="sc-tags">
+      <div class="tag tag-text">Text</div>
+      <div class="tag tag-time">0:00 – 0:03</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block amber">
+      <div class="bl bl-amber">Content Feedback</div>
+      <div class="bt">The original frame tries to do two jobs: hook headline AND a 5-step pain list. In 3 seconds, the viewer reads one or the other — not both. Scenes 2a–2d already handle the pain with real tool screenshots, making the list redundant. The headline should create tension, not describe a process.</div>
+    </div>
+    <div class="block green">
+      <div class="bl bl-green">Storytelling</div>
+      <div class="bt">The hook's job is singular: stop the scroll. It must create curiosity or make an impossible-sounding claim. The viewer decides in 1.5 seconds. One line, one idea, one reason to stay.</div>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="block">
+      <div class="bl">Options</div>
+      <div class="options">
+        <div class="option rec">
+          <div class="opt-h"><div class="opt-letter">A</div><div class="opt-title">The impossible claim</div><div class="opt-rec">Recommended</div></div>
+          <div class="opt-body">"You built the page. <em>The dashboard was already there.</em>" — Sounds wrong. Dashboards don't build themselves. Maximum curiosity in minimum time.</div>
+        </div>
+        <div class="option">
+          <div class="opt-h"><div class="opt-letter">B</div><div class="opt-title">The direct question</div></div>
+          <div class="opt-body">"Do you still set up tracking <em>after every campaign launch?</em>" — Confrontational yes/no. More directly challenging.</div>
+        </div>
+        <div class="option">
+          <div class="opt-h"><div class="opt-letter">C</div><div class="opt-title">The stat hook</div></div>
+          <div class="opt-body">"47 minutes. <em>Average time to configure tracking for one campaign page.</em>" — Big number hits first. Requires defensible stat.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Recommended Content</div>
+      <table class="ds">
+        <tr><td>Eyebrow</td><td>None</td></tr>
+        <tr><td>Line 1</td><td>You built the page.</td></tr>
+        <tr><td>Line 2</td><td>The dashboard was already there.</td></tr>
+        <tr><td>Subtitle</td><td>None</td></tr>
+        <tr><td>Logo</td><td>Havola wordmark · bottom-left</td></tr>
+      </table>
+    </div>
+    <div class="block">
+      <div class="bl">Design Specs (DS v2.1)</div>
+      <table class="ds">
+        <tr><td>Surface</td><td>Surface B — Navy #1B1F3B</td></tr>
+        <tr><td>Grain</td><td>2% opacity</td></tr>
+        <tr><td>Line 1</td><td>64px 300 Light · white 100%</td></tr>
+        <tr><td>Line 2</td><td>64px 300 Light Italic · white 30%</td></tr>
+        <tr><td>Line gap</td><td>8px</td></tr>
+        <tr><td>Logo</td><td>White wordmark · 12% opacity</td></tr>
+        <tr><td>Accent line</td><td>1px at x=60 · white 4%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Entry</td><td>0ms</td><td>Hard cut — text already on screen, no animation. Frame appears instantly.</td></tr>
+        <tr><td>Hold</td><td>3000ms</td><td>Static. No movement. Let text breathe.</td></tr>
+        <tr><td>Exit</td><td>0ms</td><td>Cut (0ms) to Scene 2a.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="block dark">
+      <div class="bl" style="color:rgba(255,255,255,0.30);">Voiceover</div>
+      <div class="vo">"You built the page. The dashboard was already there."</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 2a — BUILD THE PAGE -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">2a</div>
+    <div class="sc-name">Pain — Build the Page</div>
+    <div class="sc-tags">
+      <div class="tag tag-screen">Screen rec</div>
+      <div class="tag tag-time">0:03 – 0:04</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block green">
+      <div class="bl bl-green">Content</div>
+      <div class="bt">A generic Webflow-style page builder (NOT Havola). The Whitfield & Co "Summer Sale 2026" campaign page is being built: hero section, features grid, a form block being dragged into place. The "Publish" button visible in top-right. This is the "old way" — building on a third-party tool before the tracking tax begins.</div>
+    </div>
+    <div class="block green">
+      <div class="bl bl-green">Storytelling</div>
+      <div class="bt">First beat of the pain. The VO says "Build the page" — the viewer sees a familiar builder interface. The page itself looks fine. The problem isn't building. The problem is everything that comes after. This sets up the chain: build → tag → UTM → zero.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Design Specs</div>
+      <table class="ds">
+        <tr><td>Surface</td><td>Navy #1B1F3B behind laptop</td></tr>
+        <tr><td>Laptop</td><td>960×520 screen · MacBook chrome</td></tr>
+        <tr><td>Content</td><td>Generic page builder · 3 panels (elements, canvas, properties)</td></tr>
+        <tr><td>Page</td><td>"Whitfield & Co · Summer Sale 2026"</td></tr>
+        <tr><td>Active element</td><td>"Form" highlighted in purple · being dragged</td></tr>
+        <tr><td>URL bar</td><td>summer-sale.example.com</td></tr>
+      </table>
+    </div>
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Laptop entry</td><td>300ms</td><td>Fade in + slide up 24px. cubic-bezier(0.16, 1, 0.3, 1)</td></tr>
+        <tr><td>Cursor appear</td><td>500ms after</td><td>Fade in 200ms</td></tr>
+        <tr><td>Cursor drag</td><td>600–900ms</td><td>Move from Form panel item toward drop zone</td></tr>
+        <tr><td>Hold</td><td>1000ms</td><td>Static frame</td></tr>
+        <tr><td>Exit</td><td>0ms</td><td>Cut to Scene 2b</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-2a-builder.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 2b — TAG MANAGER -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">2b</div>
+    <div class="sc-name">Pain — Tag Manager</div>
+    <div class="sc-tags">
+      <div class="tag tag-screen">Screen rec</div>
+      <div class="tag tag-time">0:04 – 0:06</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block green">
+      <div class="bl bl-green">Content — No Issues</div>
+      <div class="bt">GTM workspace with 10 realistic tags (GA4 Page View, GA4 Form Submit, FB PageView, LinkedIn Conversion, Hotjar Init, Remarketing Tag, TikTok PageView). Status badges showing "Enabled" and one "Paused." "New Tag" modal open with empty "Choose Tag Type..." dropdown. Container ID: GTM-WF7X9K2.</div>
+    </div>
+    <div class="block green">
+      <div class="bl bl-green">Storytelling</div>
+      <div class="bt">Second beat — recognition is instant. The blue GTM interface is unmistakable to anyone in digital marketing. The "New Tag" modal being open implies they're setting up yet another tag. Good implied narrative: the work never ends.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Design Specs</div>
+      <table class="ds">
+        <tr><td>Surface</td><td>Navy #1B1F3B behind laptop</td></tr>
+        <tr><td>Laptop</td><td>960×520 screen · same frame as 2a</td></tr>
+        <tr><td>Content</td><td>Google Tag Manager · Tags list + New Tag modal</td></tr>
+        <tr><td>Cursor</td><td>Near "Choose Tag Type..." dropdown</td></tr>
+      </table>
+    </div>
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Entry</td><td>0ms</td><td>Cut from Scene 2a</td></tr>
+        <tr><td>Tag list scroll</td><td>0–1200ms</td><td>Cursor slowly scrolls through tags list. Communicates "there's a lot of this."</td></tr>
+        <tr><td>Modal appear</td><td>1200ms</td><td>Fade in 400ms + scale 0.95→1.0. Overlay fades in 300ms.</td></tr>
+        <tr><td>Cursor move</td><td>1400–1800ms</td><td>Cursor moves to "Choose Tag Type..." dropdown</td></tr>
+        <tr><td>Hold</td><td>200ms</td><td>Static</td></tr>
+        <tr><td>Exit</td><td>0ms</td><td>Cut to Scene 2c</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-2b-tagmanager.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 2c — UTM BUILDER -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">2c</div>
+    <div class="sc-name">Pain — UTM Builder</div>
+    <div class="sc-tags">
+      <div class="tag tag-screen">Screen rec</div>
+      <div class="tag tag-time">0:06 – 0:08</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block green">
+      <div class="bl bl-green">Content — No Issues</div>
+      <div class="bt">Google Campaign URL Builder. 6 fields: Website URL (https://www.example.com/summer-sale-2026), Source (linkedin), Medium (paid-social), Name (summer-sale-2026), Term (carousel-a), Content (hero-banner-v2 with typing cursor). Generated URL visible at bottom — a long mess of utm parameters colour-coded: base URL dark, params blue, values green, ampersands grey.</div>
+    </div>
+    <div class="block green">
+      <div class="bl bl-green">Storytelling</div>
+      <div class="bt">Third beat — different flavour of pain. GTM was technical and intimidating. UTM building is boring and repetitive. Two different emotions. The typing cursor implies mid-task — still filling things in.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Design Specs</div>
+      <table class="ds">
+        <tr><td>Surface</td><td>Navy #1B1F3B behind laptop</td></tr>
+        <tr><td>Laptop</td><td>960×520 screen · same frame</td></tr>
+        <tr><td>Content</td><td>ga-dev-tools.google/ga4/campaign-url-builder</td></tr>
+        <tr><td>Active field</td><td>"Campaign Content" with blue focus border + typing cursor</td></tr>
+        <tr><td>Generated URL</td><td>Visible, colour-coded, trailing off edge</td></tr>
+      </table>
+    </div>
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Entry</td><td>0ms</td><td>Cut from Scene 2b</td></tr>
+        <tr><td>Typing</td><td>0–1500ms</td><td>Cursor types "hero-banner-v2" character by character in Campaign Content field. Generated URL grows with each keystroke.</td></tr>
+        <tr><td>Cursor blink</td><td>Continuous</td><td>Text cursor blinks at 530ms interval</td></tr>
+        <tr><td>Hold</td><td>500ms</td><td>Static with cursor blinking</td></tr>
+        <tr><td>Exit</td><td>0ms</td><td>Cut to Scene 2d</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-2c-utm.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 2d — GA4 ZERO -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">2d</div>
+    <div class="sc-name">Pain — GA4 Real-Time Zero</div>
+    <div class="sc-tags">
+      <div class="tag tag-screen">Screen rec</div>
+      <div class="tag tag-time">0:08 – 0:10</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block green">
+      <div class="bl bl-green">Content — No Issues</div>
+      <div class="bt">GA4 Real-time view. The big "0 active users right now." "Users in last 30 minutes" chart is a flat line of empty bars. "Where users started" → "No data available — 0." World map faded and empty. "How users are trending" → all zeros. "Event count by Event name" → "No events recorded." Property: "Summer Sale 2026." Refresh button visible.</div>
+    </div>
+    <div class="block blue">
+      <div class="bl bl-blue">Storytelling — Emotional Low Point</div>
+      <div class="bt">Fourth beat and gut punch. GTM was intimidating, UTM was tedious, but GA4 showing zero is devastating — <strong>"I did all that work and it's not even working."</strong> The pain escalates: complex → boring → devastating. Hold this frame 3 seconds — let the zero sit.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Design Specs</div>
+      <table class="ds">
+        <tr><td>Surface</td><td>Navy #1B1F3B behind laptop</td></tr>
+        <tr><td>Laptop</td><td>960×520 screen · same frame</td></tr>
+        <tr><td>Content</td><td>Google Analytics 4 · Real-time view</td></tr>
+        <tr><td>Key element</td><td>"0" at 88px Light 300 in #dadce0</td></tr>
+        <tr><td>Cursor</td><td>Near Refresh button</td></tr>
+      </table>
+    </div>
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Entry</td><td>0ms</td><td>Cut from Scene 2c</td></tr>
+        <tr><td>Hold</td><td>0–1500ms</td><td>Static. The zero sits. Silence.</td></tr>
+        <tr><td>Cursor click refresh</td><td>1500ms</td><td>Cursor moves to Refresh button. Click ripple: #4285f4 20% opacity, 24→64px, 300ms.</td></tr>
+        <tr><td>Zero stays zero</td><td>1500–2500ms</td><td>Nothing changes. The zero stays at zero. This moment is the whole pain sequence.</td></tr>
+        <tr><td>Hold</td><td>500ms</td><td>Static</td></tr>
+        <tr><td>Exit</td><td>300ms</td><td>Fade out to Scene 3 (only fade transition in pain sequence)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="block dark">
+      <div class="bl" style="color:rgba(255,255,255,0.30);">Voiceover (across Scenes 2a–2d)</div>
+      <div class="vo">"Build the page. Set up Tag Manager. Configure UTMs. Check if the data's flowing. Refresh. Refresh again."</div>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-2d-ga4zero.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 3 — SHIFT -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">3</div>
+    <div class="sc-name">Shift</div>
+    <div class="sc-tags">
+      <div class="tag tag-text">Text</div>
+      <div class="tag tag-time">0:10 – 0:13</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block amber">
+      <div class="bl bl-amber">Content Feedback</div>
+      <div class="bt">Original headline was in italic. Italic reads as soft and uncertain — the opposite of what this pivot needs. The question should feel bold, not tentative. Italic diminish is for secondary lines, not the primary claim (DS v2.1 §4.3).</div>
+    </div>
+    <div class="block green">
+      <div class="bl bl-green">Storytelling</div>
+      <div class="bt">This frame bridges pain and product. The question format is correct — it asks the viewer to imagine a different reality. The subtitle "Campaign infrastructure that works from the moment you publish" previews the value prop without claiming superiority.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Recommended Content</div>
+      <table class="ds">
+        <tr><td>Eyebrow</td><td>CAMPAIGN INTELLIGENCE</td></tr>
+        <tr><td>Headline</td><td>What if you never had to do any of that?</td></tr>
+        <tr><td>Subtitle</td><td>Campaign infrastructure that works from the moment you publish.</td></tr>
+        <tr><td>Logo</td><td>Havola wordmark · bottom-left</td></tr>
+      </table>
+    </div>
+    <div class="block">
+      <div class="bl">Design Specs</div>
+      <table class="ds">
+        <tr><td>Surface</td><td>Surface B — Navy #1B1F3B</td></tr>
+        <tr><td>Grain</td><td>2% opacity</td></tr>
+        <tr><td>Eyebrow</td><td>14px 400 · uppercase · 3px spacing · white 20%</td></tr>
+        <tr><td>Headline</td><td>52px 300 Light (NOT italic) · white 100%</td></tr>
+        <tr><td>Subtitle</td><td>18px 300 · white 35%</td></tr>
+        <tr><td>Logo</td><td>White wordmark · 15% opacity</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Entry</td><td>300ms</td><td>Fade in from Scene 2d (only non-cut transition in first half)</td></tr>
+        <tr><td>Eyebrow</td><td>0ms</td><td>Fade in 400ms</td></tr>
+        <tr><td>Headline</td><td>100ms delay</td><td>Fade in 400ms</td></tr>
+        <tr><td>Subtitle</td><td>200ms delay</td><td>Fade in 400ms</td></tr>
+        <tr><td>Hold</td><td>3000ms</td><td>Static after animation completes</td></tr>
+        <tr><td>Exit</td><td>0ms</td><td>Cut to Scene 4</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="block dark">
+      <div class="bl" style="color:rgba(255,255,255,0.30);">Voiceover</div>
+      <div class="vo">"What if you never had to do any of that?"</div>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-3-shift.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 4 — HAVOLA BUILDER -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">4</div>
+    <div class="sc-name">Product — Campaign Sites Builder</div>
+    <div class="sc-tags">
+      <div class="tag tag-screen">Screen rec</div>
+      <div class="tag tag-time">0:13 – 0:20</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block green">
+      <div class="bl bl-green">Content</div>
+      <div class="bt">Havola product UI with Navy sidebar (#1B1F3B), ✳ logo, icon navigation with Sites active. Breadcrumb: "Sites › Summer Sale 2026" with summer-sale-2026.hav.la URL. Draft badge. Sections picker: "CTA Block" highlighted in Action Blue, being dragged. Canvas showing the same Whitfield & Co Summer Sale 2026 page: hero (Navy gradient), features grid, sign-up form. Drag ghost floating toward blue dashed drop zone. <strong>Publish button in Action Blue #0065F4.</strong></div>
+    </div>
+    <div class="block green">
+      <div class="bl bl-green">Storytelling</div>
+      <div class="bt">This scene's job is contrast with Scene 2a. After the tedium of 2a–2d, this must feel smooth, fast, satisfying. One drag. One click. Live. The publish click is the pivot — everything after is automatic. Same campaign, completely different experience.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Recommended Content</div>
+      <table class="ds">
+        <tr><td>Eyebrow</td><td>CAMPAIGN SITES</td></tr>
+        <tr><td>Headline</td><td>Build your campaign page. <em>Hit publish.</em></td></tr>
+        <tr><td>Subtitle</td><td>Drag sections. Add content. Live in minutes.</td></tr>
+      </table>
+    </div>
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Entry</td><td>0ms</td><td>Cut from Scene 3</td></tr>
+        <tr><td>Laptop appear</td><td>0–500ms</td><td>Fade in + slide up 24px. cubic-bezier(0.16, 1, 0.3, 1)</td></tr>
+        <tr><td>Cursor drags CTA</td><td>1000–2500ms</td><td>Drag ghost moves from Sections picker toward drop zone. Drop zone activates with blue dashed border.</td></tr>
+        <tr><td>Section drops</td><td>2500ms</td><td>Ghost disappears. CTA section fades in 400ms + slide down 4px.</td></tr>
+        <tr><td>Cursor to Publish</td><td>3000–4000ms</td><td>Cursor moves to Publish button in top-right</td></tr>
+        <tr><td>Click Publish</td><td>4000ms</td><td>Click ripple: Action Blue #0065F4, 20% opacity, 24→64px, 300ms. Click SFX –24dB.</td></tr>
+        <tr><td>Publish confirm</td><td>4300ms</td><td>Badge changes from "Draft" to "Live" with green bg. Brief celebration moment.</td></tr>
+        <tr><td>Hold</td><td>2700ms</td><td>Static — viewer registers "it's live"</td></tr>
+        <tr><td>Exit</td><td>0ms</td><td><strong>HARD CUT to Scene 5. Non-negotiable. No fade. No black frame.</strong></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="block dark">
+      <div class="bl" style="color:rgba(255,255,255,0.30);">Voiceover</div>
+      <div class="vo">"Build your campaign page on Havola. Drag the sections. Hit publish. You're live."</div>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-4-havola-builder.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 5 — ANALYTICS (KEY) -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num key">5</div>
+    <div class="sc-name">Product — Data Already There</div>
+    <div class="sc-tags">
+      <div class="tag tag-key">Key Scene</div>
+      <div class="tag tag-screen">Screen rec</div>
+      <div class="tag tag-time">0:20 – 0:26</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block green">
+      <div class="bl bl-green">Content — Strong. Keep as-is.</div>
+      <div class="bt">Full Havola Analytics dashboard. 4 KPI cards with sparklines: Visits 1,247 (↑18.4%), Unique Visitors 843 (↑12.1%), Form Submissions 38 (↓3.2%), Avg Session 2m 14s (↑42.0%). Visits Over Time line chart trending up. CTR & Clicks grouped bar chart. Top Pages table. Visitor Device Split donut (Desktop 62%, Mobile 34%, Tablet 4%). Site picker shows "Summer Sale 2026" — <strong>same campaign from Scene 4.</strong> Annotation: "No setup. Already tracking."</div>
+    </div>
+    <div class="block blue">
+      <div class="bl bl-blue">Storytelling — Critical</div>
+      <div class="bt"><strong>The hard cut from Scene 4's publish confirmation to this live dashboard is the most important edit in the entire video.</strong> The viewer watched the page get published and now they're looking at live data. The gap from Scenes 2a–2d doesn't exist. The missing scene IS the message. No competitor can make this cut.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Recommended Content</div>
+      <table class="ds">
+        <tr><td>Eyebrow</td><td>CAMPAIGN ANALYTICS</td></tr>
+        <tr><td>Headline</td><td>The moment your campaign goes live, your data is live</td></tr>
+        <tr><td>Subtitle</td><td>No Tag manager. No manual UTM setup. Nothing extra to configure</td></tr>
+        <tr><td>Annotation</td><td>No setup. Already tracking.</td></tr>
+      </table>
+    </div>
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Entry</td><td>0ms</td><td><strong>HARD CUT (0ms) from Scene 4.</strong> No fade. No black. Publish → data.</td></tr>
+        <tr><td>KPI numbers</td><td>0–800ms</td><td>Count up animation. Values increment from 0 to final number. 800ms duration. ease-out.</td></tr>
+        <tr><td>Sparklines</td><td>200–1000ms</td><td>Draw left-to-right, 800ms, ease-in-out</td></tr>
+        <tr><td>Chart line</td><td>400–1200ms</td><td>SVG stroke-dashoffset draw animation, 800ms</td></tr>
+        <tr><td>Bar chart</td><td>600–1200ms</td><td>Bars grow from 0 to full height, 600ms, ease-out, 50ms stagger</td></tr>
+        <tr><td>Annotation</td><td>1500ms</td><td>Fade in 400ms + slide 8px toward KPI cards</td></tr>
+        <tr><td>Hold</td><td>4500ms</td><td>Static — viewer reads the data</td></tr>
+        <tr><td>Exit</td><td>continuous</td><td>Zoom begins into chart module for Scene 6</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="block dark">
+      <div class="bl" style="color:rgba(255,255,255,0.30);">Voiceover</div>
+      <div class="vo">"The moment you publish, your analytics are live. No Tag Manager. No UTMs. Nothing to configure. Havola built the page and the tracking — so the data's already flowing."</div>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-5-analytics.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 6 — DRILL DOWN -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">6</div>
+    <div class="sc-name">Product — Drill Down</div>
+    <div class="sc-tags">
+      <div class="tag tag-screen">Screen rec</div>
+      <div class="tag tag-time">0:26 – 0:33</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block green">
+      <div class="bl bl-green">Content</div>
+      <div class="bt">Visits Over Time line chart zoomed in. "Analyze" button in blue. Click dot on Mar 22 data point with dark tooltip: "67 visits." InsightPanel open on right with 5 level tabs (L1–L5), L2 active in Action Blue. Summary card: 67 visits, ↑24% vs previous day, above 28-day average. Device Breakdown: Desktop 62% (#2563EB), Mobile 34% (#14B8A6), Tablet 4% (#FAAD14). Recommendation card: "Mobile traffic is 34% but avg session is 38% shorter."</div>
+    </div>
+    <div class="block green">
+      <div class="bl bl-green">Storytelling</div>
+      <div class="bt">Proves depth, not breadth. The viewer sees two levels. The VO says five. The L3/L4/L5 tabs sitting grey create curiosity. The recommendation card proves the analytics aren't just numbers — they're intelligence.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Design Specs</div>
+      <table class="ds">
+        <tr><td>Layout</td><td>Chart (60% width) + InsightPanel (40% width)</td></tr>
+        <tr><td>Click dot</td><td>18px ring, 2.5px border, Action Blue, 6px solid dot centre</td></tr>
+        <tr><td>Tooltip</td><td>Brand Deep #111827 bg, white text, 6px radius</td></tr>
+        <tr><td>Panel border</td><td>1px solid Mist #E5E7EB left</td></tr>
+        <tr><td>Active tab</td><td>Action Blue bg, white text</td></tr>
+        <tr><td>Breakdown bars</td><td>#2563EB Desktop · #14B8A6 Mobile · #FAAD14 Tablet</td></tr>
+        <tr><td>Rec card</td><td>#F0FDF4 bg, #BBF7D0 border, #166534 title</td></tr>
+      </table>
+    </div>
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Zoom into chart</td><td>0–800ms</td><td>800ms ease-in-out zoom to 150% on Visits Over Time module</td></tr>
+        <tr><td>Cursor appear</td><td>800ms</td><td>Fade in 200ms on the chart</td></tr>
+        <tr><td>Cursor click</td><td>1200ms</td><td>Click on Mar 22 data point. Ripple: Action Blue #0065F4, 20%, 24→64px, 300ms. Click SFX –24dB.</td></tr>
+        <tr><td>Tooltip</td><td>1200ms</td><td>Fade in 300ms + slide down 6px</td></tr>
+        <tr><td>InsightPanel</td><td>1400ms</td><td>Slides in from right, 500ms, cubic-bezier(0.16, 1, 0.3, 1)</td></tr>
+        <tr><td>L1 content</td><td>1900–3200ms</td><td>Summary card visible. Hold 1.3 seconds.</td></tr>
+        <tr><td>L1→L2 transition</td><td>3200ms</td><td>Tab switches. L2 activates in blue. Content crossfades 300ms.</td></tr>
+        <tr><td>Breakdown bars</td><td>3500ms</td><td>Bars grow from 0 to width, 500ms, 100ms stagger</td></tr>
+        <tr><td>Rec card</td><td>4200ms</td><td>Fade in 400ms</td></tr>
+        <tr><td>Hold</td><td>2800ms</td><td>Static — viewer reads breakdown + recommendation</td></tr>
+        <tr><td>Exit</td><td>continuous</td><td>Transition to Scene 7</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="block dark">
+      <div class="bl" style="color:rgba(255,255,255,0.30);">Voiceover</div>
+      <div class="vo">"Click any chart. Drill down five levels deep. From the number, to the device, to the page, to the trend, to the recommendation."</div>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-6-drilldown.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 7 — COMPARE & EXPORT -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">7</div>
+    <div class="sc-name">Product — Compare & Export</div>
+    <div class="sc-tags">
+      <div class="tag tag-screen">Screen rec</div>
+      <div class="tag tag-time">0:33 – 0:40</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block green">
+      <div class="bl bl-green">Content</div>
+      <div class="bt">Dashboard with Compare toggle ON (Action Blue + "ON" badge). KPI cards showing current + previous values: 1,247 vs 1,053 (↑18.4%), 843 vs 752 (↑12.1%), 38 vs 39 (↓3.2%), 2m 14s vs 1m 34s (↑42.0%). Chart with solid line (current) + dashed line (previous period). Export Modal open: PDF selected in Action Blue, 9-Section Insights Report list, checkboxes for comparison data + recommendations, Export PDF button.</div>
+    </div>
+    <div class="block green">
+      <div class="bl bl-green">Storytelling</div>
+      <div class="bt">Answers two questions: "what changed?" (compare) and "how do I share this?" (export). Both are one-click actions. Closes the product sequence by proving data goes from dashboard to client inbox in seconds.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Recommended Content</div>
+      <table class="ds">
+        <tr><td>Eyebrow (Compare)</td><td>COMPARE</td></tr>
+        <tr><td>Headline (Compare)</td><td>One toggle.</td></tr>
+        <tr><td>Eyebrow (Export)</td><td>EXPORT</td></tr>
+        <tr><td>Headline (Export)</td><td>One click.</td></tr>
+        <tr><td>Subtitle</td><td>Your client report is ready</td></tr>
+      </table>
+    </div>
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Entry</td><td>0ms</td><td>Continuous from Scene 6 — zoom out 600ms ease-in-out back to full dashboard</td></tr>
+        <tr><td>Cursor to Compare</td><td>0–600ms</td><td>Cursor moves to Compare toggle</td></tr>
+        <tr><td>Toggle ON</td><td>600ms</td><td>Toggle slides from grey to Action Blue, dot moves right. 200ms ease-out. Click SFX –24dB.</td></tr>
+        <tr><td>Dashed line appears</td><td>800–1400ms</td><td>Previous period dashed line draws in (stroke-dashoffset), 600ms</td></tr>
+        <tr><td>Deltas appear</td><td>1000–1400ms</td><td>KPI previous values + delta percentages fade in 300ms, 100ms stagger</td></tr>
+        <tr><td>Hold compare</td><td>2000ms</td><td>Static — viewer reads deltas</td></tr>
+        <tr><td>Cursor to Export</td><td>3500ms</td><td>Cursor moves to Export button or menu</td></tr>
+        <tr><td>Click Export</td><td>3800ms</td><td>Click ripple. Click SFX –24dB.</td></tr>
+        <tr><td>Modal overlay</td><td>3800ms</td><td>Overlay fades in 200ms (rgba(0,0,0,0.12))</td></tr>
+        <tr><td>Modal appear</td><td>4000ms</td><td>Scale 0.95→1.0, opacity 0→1, 400ms, cubic-bezier(0.16, 1, 0.3, 1)</td></tr>
+        <tr><td>Cursor to Export PDF</td><td>5000ms</td><td>Cursor moves to Export PDF button</td></tr>
+        <tr><td>Click Export PDF</td><td>5500ms</td><td>Button press state (darken 10%), click ripple. Click SFX –24dB.</td></tr>
+        <tr><td>Hold</td><td>1500ms</td><td>Static — viewer reads report sections</td></tr>
+        <tr><td>Exit</td><td>600ms</td><td>Crossfade to Scene 8</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="full">
+    <div class="block dark">
+      <div class="bl" style="color:rgba(255,255,255,0.30);">Voiceover</div>
+      <div class="vo">"Compare any period with one toggle. See what went up and what went down. Then export a full insights report for your client — ready in seconds."</div>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-7-compare-export.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 8 — THE LOOP -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">8</div>
+    <div class="sc-name">The Loop</div>
+    <div class="sc-tags">
+      <div class="tag tag-overlay">Text + product</div>
+      <div class="tag tag-time">0:40 – 0:44</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block green">
+      <div class="bl bl-green">Content</div>
+      <div class="bt">"Build → Track → Understand" distils the entire video into three words. "No configuration step." is the differentiator stated plainly. Text overlaid on the blurred Analytics dashboard from Scene 5 — so the product is still visible underneath (78% Brand Ink overlay + 8px blur).</div>
+    </div>
+    <div class="block green">
+      <div class="bl bl-green">Storytelling</div>
+      <div class="bt">This frame exists to be remembered. After 40 seconds of demos, the viewer needs one takeaway. Three words and one truth. The blurred product beneath connects the words to the proof.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Recommended Content</div>
+      <table class="ds">
+        <tr><td>Eyebrow</td><td>CAMPAIGN INFRASTRUCTURE</td></tr>
+        <tr><td>Headline</td><td>Build → Track → Understand</td></tr>
+        <tr><td>Subline</td><td>No configuration step.</td></tr>
+        <tr><td>Logo</td><td>Havola wordmark · bottom-left · 10%</td></tr>
+        <tr><td>Background</td><td>Blurred dashboard + 78% Brand Ink overlay</td></tr>
+      </table>
+    </div>
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Entry</td><td>600ms</td><td>Crossfade from Scene 7</td></tr>
+        <tr><td>"Build →"</td><td>0ms</td><td>Fade in 300ms</td></tr>
+        <tr><td>"Track →"</td><td>150ms delay</td><td>Fade in 300ms</td></tr>
+        <tr><td>"Understand"</td><td>300ms delay</td><td>Fade in 300ms</td></tr>
+        <tr><td>Subline</td><td>600ms delay</td><td>Fade in 300ms after "Understand"</td></tr>
+        <tr><td>Hold</td><td>4000ms</td><td>Static after animation completes</td></tr>
+        <tr><td>Exit</td><td>600ms</td><td>Crossfade to Scene 9</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Design Specs</div>
+      <table class="ds">
+        <tr><td>Background L1</td><td>Analytics dashboard from Scene 5</td></tr>
+        <tr><td>Background L2</td><td>CSS blur(8px)</td></tr>
+        <tr><td>Background L3</td><td>Brand Ink #060608 · 78% opacity</td></tr>
+        <tr><td>Eyebrow</td><td>14px 400 · uppercase · 3px spacing · white 18%</td></tr>
+        <tr><td>Headline</td><td>56px 300 Light · white 100% · arrows white 15%</td></tr>
+        <tr><td>Subline</td><td>26px 300 Light Italic · white 22%</td></tr>
+      </table>
+    </div>
+    <div class="block dark">
+      <div class="bl" style="color:rgba(255,255,255,0.30);">Voiceover</div>
+      <div class="vo">"Build. Track. Understand. No configuration step."</div>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-8-loop.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- SCENE 9 — CTA -->
+<!-- ================================================ -->
+<div class="scene">
+  <div class="sc-head">
+    <div class="sc-num">9</div>
+    <div class="sc-name">CTA</div>
+    <div class="sc-tags">
+      <div class="tag tag-brand">Brand</div>
+      <div class="tag tag-time">0:44 – 0:48</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block green">
+      <div class="bl bl-green">Content</div>
+      <div class="bt">✳ Havola wordmark at 85% opacity, centred. Tagline: "Campaign intelligence, unified." in Light Italic at 40%. Thin divider. Value list with tight callbacks: "No code required" (← Scene 4 builder), "No UTM setup" (← Scene 2c UTM), "No tag manager" (← Scene 2b GTM). Plain URL: havola.co.uk at 40% — no button. Premium and restrained.</div>
+    </div>
+    <div class="block green">
+      <div class="bl bl-green">Storytelling</div>
+      <div class="bt">Each "No..." maps directly to a pain point the viewer watched earlier. The video ends by connecting the invitation back to the problems. Everything the viewer saw in 48 seconds resolves in three lines.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Recommended Content</div>
+      <table class="ds">
+        <tr><td>Logo</td><td>✳ Havola · white 85% · centred</td></tr>
+        <tr><td>Tagline</td><td>Campaign intelligence, unified.</td></tr>
+        <tr><td>Value 1</td><td>No code required</td></tr>
+        <tr><td>Value 2</td><td>No UTM setup</td></tr>
+        <tr><td>Value 3</td><td>No tag manager</td></tr>
+        <tr><td>URL</td><td>havola.co.uk</td></tr>
+      </table>
+    </div>
+    <div class="block purple">
+      <div class="bl bl-purple">Animation</div>
+      <table class="anim">
+        <tr><th>Element</th><th>Timing</th><th>Motion</th></tr>
+        <tr><td>Entry</td><td>600ms</td><td>Crossfade from Scene 8</td></tr>
+        <tr><td>Logo</td><td>0ms</td><td>Fade in 400ms</td></tr>
+        <tr><td>Tagline</td><td>400ms delay</td><td>Fade in 400ms</td></tr>
+        <tr><td>Value list</td><td>800ms delay</td><td>Fade in 400ms, staggered 100ms per item</td></tr>
+        <tr><td>URL</td><td>1500ms delay</td><td>Fade in 400ms</td></tr>
+        <tr><td>Hold</td><td>4000ms</td><td>Static. Music swells to –14 dB.</td></tr>
+        <tr><td>End</td><td>0:48</td><td>Clean end. No fade to black — frame holds until platform cuts.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Design Specs</div>
+      <table class="ds">
+        <tr><td>Surface</td><td>Surface B — Navy #1B1F3B</td></tr>
+        <tr><td>Grain</td><td>2% opacity</td></tr>
+        <tr><td>Logo</td><td>48px 300 + ✳ 40px 700 · white 85% · centred</td></tr>
+        <tr><td>Tagline</td><td>24px 300 Light Italic · white 40% · centred</td></tr>
+        <tr><td>Divider</td><td>40px wide · 1px · white 8% · centred</td></tr>
+        <tr><td>Values</td><td>17px 300 · white 32% · centred · 2.2× line-height</td></tr>
+        <tr><td>URL</td><td>16px 400 · white 40% · centred</td></tr>
+      </table>
+    </div>
+    <div class="block dark">
+      <div class="bl" style="color:rgba(255,255,255,0.30);">Voiceover</div>
+      <div class="vo">"Havola. Campaign intelligence, unified."</div>
+    </div>
+  </div>
+
+  <div class="banner-ref">📎 Banner: <span class="banner-ref-file">scene-9-cta.png</span> · 2400×1600 · transparent</div>
+</div>
+
+<!-- ================================================ -->
+<!-- FULL VO SCRIPT -->
+<!-- ================================================ -->
+<div class="divider"></div>
+<div style="padding:48px 0;">
+  <div class="ey">Voiceover</div>
+  <div class="st">Full script · ~115 words · 145 wpm</div>
+  <p style="font-size:13px;color:#9CA3AF;margin-bottom:20px;">Tone: calm, analytical, confident. Senior colleague — not salesperson. Deliberate pauses between sections.</p>
+  <div class="vo" style="font-size:15px;line-height:30px;padding:32px;background:#060608;">You built the page. The dashboard was already there.
+
+Build the page. Set up Tag Manager. Configure UTMs.
+Check if the data's flowing. Refresh. Refresh again.
+
+What if you never had to do any of that?
+
+Build your campaign page on Havola.
+Drag the sections. Hit publish. You're live.
+
+The moment you publish, your analytics are live.
+No Tag Manager. No UTMs. Nothing to configure.
+Havola built the page and the tracking —
+so the data's already flowing.
+
+Click any chart. Drill down five levels deep.
+From the number, to the device, to the page,
+to the trend, to the recommendation.
+
+Compare any period with one toggle.
+See what went up and what went down.
+Then export a full insights report for your client —
+ready in seconds.
+
+Build. Track. Understand. No configuration step.
+
+Havola. Campaign intelligence, unified.</div>
+</div>
+
+<!-- ================================================ -->
+<!-- AUDIO SPEC -->
+<!-- ================================================ -->
+<div class="divider"></div>
+<div style="padding:48px 0;">
+  <div class="ey">Audio</div>
+  <div class="st">Voiceover & Music Spec</div>
+  <div class="g2">
+    <div class="block">
+      <div class="bl">Voiceover</div>
+      <table class="ds">
+        <tr><td>Tone</td><td>Calm, analytical, confident. Senior colleague.</td></tr>
+        <tr><td>Pace</td><td>145 wpm. Deliberate pauses.</td></tr>
+        <tr><td>Pause: after "again"</td><td>1 second</td></tr>
+        <tr><td>Pause: after "configure"</td><td>0.5 seconds</td></tr>
+        <tr><td>Pause: Build.Track.Understand</td><td>0.5s between each word</td></tr>
+      </table>
+    </div>
+    <div class="block">
+      <div class="bl">Music & SFX</div>
+      <table class="ds">
+        <tr><td>Style</td><td>Minimal ambient, electronic. No lyrics. No percussion-forward.</td></tr>
+        <tr><td>Under VO</td><td>–20 dB</td></tr>
+        <tr><td>Scene 8 swell</td><td>–16 dB</td></tr>
+        <tr><td>Scene 9 swell</td><td>–14 dB</td></tr>
+        <tr><td>Click SFX</td><td>–24 dB · soft click · Scenes 4, 5, 6, 7</td></tr>
+        <tr><td>Reference</td><td>Stripe product videos, Linear changelogs</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================ -->
+<!-- CAPTIONS -->
+<!-- ================================================ -->
+<div class="divider"></div>
+<div style="padding:48px 0;">
+  <div class="ey">Captions</div>
+  <div class="st">Burned-in Subtitle Spec</div>
+  <div class="block">
+    <table class="ds">
+      <tr><td>Format</td><td>Burned-in (required for all short-form)</td></tr>
+      <tr><td>Font</td><td>Inter · 18px · SemiBold 600</td></tr>
+      <tr><td>Colour</td><td>White 100%</td></tr>
+      <tr><td>Background</td><td>Black 60% · pill · radius 6px · padding 8px 16px</td></tr>
+      <tr><td>Position</td><td>Centred · y=1300 (above bottom safe zone)</td></tr>
+      <tr><td>Max lines</td><td>2</td></tr>
+      <tr><td>Active word</td><td>Action Blue #0065F4 highlight</td></tr>
+      <tr><td>Export format</td><td>SRT (primary) + VTT (secondary)</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ================================================ -->
+<!-- SUMMARY -->
+<!-- ================================================ -->
+<div class="divider"></div>
+<div style="padding:48px 0;">
+  <div class="ey">Summary</div>
+  <div class="st">All scenes with status and banner files</div>
+  <table class="sum">
+    <thead><tr><th>#</th><th>Scene</th><th>Time</th><th>Type</th><th>Status</th><th>Banner File</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Hook</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:00–0:03</td><td>Text</td><td style="color:#F59E0B;font-weight:600;">Revise</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">—</td></tr>
+      <tr><td>2a</td><td>Build the Page</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:03–0:04</td><td>Screen rec</td><td style="color:#10B981;font-weight:600;">Ready</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-2a-builder.png</td></tr>
+      <tr><td>2b</td><td>Tag Manager</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:04–0:06</td><td>Screen rec</td><td style="color:#10B981;font-weight:600;">Ready</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-2b-tagmanager.png</td></tr>
+      <tr><td>2c</td><td>UTM Builder</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:06–0:08</td><td>Screen rec</td><td style="color:#10B981;font-weight:600;">Ready</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-2c-utm.png</td></tr>
+      <tr><td>2d</td><td>GA4 Zero</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:08–0:10</td><td>Screen rec</td><td style="color:#10B981;font-weight:600;">Ready</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-2d-ga4zero.png</td></tr>
+      <tr><td>3</td><td>Shift</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:10–0:13</td><td>Text</td><td style="color:#F59E0B;font-weight:600;">Revise</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-3-shift.png</td></tr>
+      <tr><td>4</td><td>Campaign Sites</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:13–0:20</td><td>Screen rec</td><td style="color:#10B981;font-weight:600;">Ready</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-4-havola-builder.png</td></tr>
+      <tr><td style="font-weight:600;">5</td><td style="font-weight:600;">Analytics (key)</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:20–0:26</td><td>Screen rec</td><td style="color:#10B981;font-weight:600;">Ready</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-5-analytics.png</td></tr>
+      <tr><td>6</td><td>Drill Down</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:26–0:33</td><td>Screen rec</td><td style="color:#10B981;font-weight:600;">Ready</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-6-drilldown.png</td></tr>
+      <tr><td>7</td><td>Compare & Export</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:33–0:40</td><td>Screen rec</td><td style="color:#10B981;font-weight:600;">Ready</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-7-compare-export.png</td></tr>
+      <tr><td>8</td><td>The Loop</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:40–0:44</td><td>Text + blur</td><td style="color:#10B981;font-weight:600;">Ready</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-8-loop.png</td></tr>
+      <tr><td>9</td><td>CTA</td><td style="font-family:monospace;font-size:11px;color:#6B7280;">0:44–0:48</td><td>Brand</td><td style="color:#F59E0B;font-weight:600;">Minor fix</td><td style="font-family:monospace;font-size:11px;color:#0065F4;">scene-9-cta.png</td></tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:32px;display:flex;gap:24px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:8px;"><div style="width:12px;height:12px;border-radius:999px;background:#10B981;"></div><span style="font-size:13px;color:#6B7280;">Ready (8 scenes)</span></div>
+    <div style="display:flex;align-items:center;gap:8px;"><div style="width:12px;height:12px;border-radius:999px;background:#F59E0B;"></div><span style="font-size:13px;color:#6B7280;">Minor revisions (3 scenes)</span></div>
+  </div>
+</div>
+
+<!-- ================================================ -->
+<!-- FILE NAMING -->
+<!-- ================================================ -->
+<div class="divider"></div>
+<div style="padding:48px 0;">
+  <div class="ey">Deliverables</div>
+  <div class="st">File Naming Convention</div>
+  <div class="block">
+    <table class="ds">
+      <tr><td>Reels</td><td>HAVOLA_SHORT_ZERO_CONFIG_REELS_FINAL.mp4</td></tr>
+      <tr><td>Shorts</td><td>HAVOLA_SHORT_ZERO_CONFIG_SHORTS_FINAL.mp4</td></tr>
+      <tr><td>TikTok</td><td>HAVOLA_SHORT_ZERO_CONFIG_TIKTOK_FINAL.mp4</td></tr>
+      <tr><td>Threads</td><td>HAVOLA_SHORT_ZERO_CONFIG_THREADS_FINAL.mp4</td></tr>
+      <tr><td>LinkedIn</td><td>HAVOLA_SHORT_ZERO_CONFIG_LI_FINAL.mp4</td></tr>
+      <tr><td>Square</td><td>HAVOLA_SHORT_ZERO_CONFIG_SQUARE_FINAL.mp4</td></tr>
+      <tr><td>YT Thumbnail</td><td>HAVOLA_THUMB_ZERO_CONFIG_YT_FINAL.png</td></tr>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  <p>Havola · Video Production Document v3.0 · Campaign Analytics: Zero-Config Intelligence · Internal</p>
+</div>
+
+</body>
+</html>
